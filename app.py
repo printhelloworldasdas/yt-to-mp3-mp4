@@ -1,6 +1,6 @@
 import os
 import glob
-from flask import Flask, request, send_file, jsonify, after_this_request
+from flask import Flask, request, send_file, send_from_directory, jsonify, after_this_request
 from flask_cors import CORS
 import yt_dlp
 
@@ -10,6 +10,12 @@ CORS(app)
 # Configuración de carpetas temporales para Render
 DOWNLOAD_FOLDER = '/tmp'
 FFMPEG_PATH = '/opt/render/project/src/ffmpeg/ffmpeg'
+
+
+@app.route('/')
+def index():
+    # Sirve el index.html desde la misma carpeta que app.py
+    return send_from_directory('.', 'index.html')
 
 
 @app.route('/api/download', methods=['GET'])
