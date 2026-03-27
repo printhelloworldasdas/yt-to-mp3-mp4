@@ -2,21 +2,27 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YT Downloader Pro</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #1a1a1a; color: white; }
-        .card { background: #2d2d2d; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 400px; text-align: center; }
-        input, select, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; box-sizing: border-box; }
-        input { background: #404040; color: white; }
-        button { background: #ff0000; color: white; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        button:hover { background: #cc0000; }
-        #status { font-size: 0.9rem; color: #aaa; margin-top: 10px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: #0f0f0f; color: white; }
+        .card { background: #212121; padding: 2.5rem; border-radius: 16px; box-shadow: 0 15px 35px rgba(0,0,0,0.7); width: 100%; max-width: 400px; text-align: center; border: 1px solid #333; }
+        h2 { margin-bottom: 1.5rem; color: #ff0000; font-size: 1.8rem; }
+        input, select, button { width: 100%; padding: 14px; margin: 12px 0; border-radius: 10px; border: 1px solid #3d3d3d; box-sizing: border-box; font-size: 1rem; outline: none; }
+        input { background: #121212; color: white; transition: border 0.3s; }
+        input:focus { border-color: #ff0000; }
+        select { background: #121212; color: white; cursor: pointer; }
+        button { background: #ff0000; color: white; font-weight: bold; cursor: pointer; border: none; transition: transform 0.2s, background 0.3s; }
+        button:hover { background: #cc0000; transform: translateY(-2px); }
+        button:active { transform: translateY(0); }
+        #status { font-size: 0.85rem; color: #aaaaaa; margin-top: 15px; min-height: 20px; }
+        .loader { color: #ff0000; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="card">
-        <h2>Downloader API</h2>
-        <input type="text" id="url" placeholder="Pega el enlace de YouTube">
+        <h2>YouTube Downloader</h2>
+        <input type="text" id="url" placeholder="Pega el enlace de YouTube aquí...">
         
         <select id="format">
             <option value="mp3">Formato: MP3 (Audio)</option>
@@ -24,34 +30,41 @@
         </select>
 
         <select id="quality">
-            <option value="best">Calidad: Máxima</option>
-            <option value="1080">1080p</option>
-            <option value="720">720p</option>
-            <option value="320">320kbps (Solo MP3)</option>
+            <option value="best">Calidad: Máxima disponible</option>
+            <option value="1080">1080p (Full HD)</option>
+            <option value="720">720p (HD)</option>
+            <option value="320">320kbps (Audio Pro)</option>
+            <option value="128">128kbps (Audio Estándar)</option>
         </select>
 
-        <button onclick="descargar()">DESCARGAR</button>
+        <button onclick="descargar()">DESCARGAR AHORA</button>
         <div id="status"></div>
     </div>
 
     <script>
         function descargar() {
-            const url = document.getElementById('url').value;
+            const urlInput = document.getElementById('url').value;
             const format = document.getElementById('format').value;
             const quality = document.getElementById('quality').value;
             const status = document.getElementById('status');
 
-            if (!url) return alert("Ingresa una URL de YouTube");
+            if (!urlInput || !urlInput.includes('youtube.com') && !urlInput.includes('youtu.be')) {
+                return alert("Por favor, introduce una URL válida de YouTube.");
+            }
             
-            status.innerText = "⏳ Procesando en el servidor... espera un momento.";
+            status.innerHTML = "<span class='loader'>⏳ Procesando...</span><br>El servidor está preparando tu archivo. No cierres la ventana.";
             
-            // CAMBIA ESTA URL por la que te dé Render después:
-            const baseApi = "http://localhost:5000"; 
-            const downloadUrl = `${baseApi}/api/download?url=${encodeURIComponent(url)}&format=${format}&quality=${quality}`;
+            // TU URL DE RENDER ACTUALIZADA
+            const baseApi = "https://yt2download.onrender.com"; 
+            const downloadUrl = `${baseApi}/api/download?url=${encodeURIComponent(urlInput)}&format=${format}&quality=${quality}`;
             
+            // Esto redirige a la descarga directa
             window.location.href = downloadUrl;
             
-            setTimeout(() => { status.innerText = "✅ Descarga iniciada"; }, 5000);
+            // Limpiamos el mensaje tras un tiempo prudencial
+            setTimeout(() => { 
+                status.innerHTML = "✅ Si la descarga no inicia, revisa tu conexión."; 
+            }, 8000);
         }
     </script>
 </body>
