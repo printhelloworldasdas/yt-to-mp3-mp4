@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>YT Downloader Pro</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #1a1a1a; color: white; }
+        .card { background: #2d2d2d; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 400px; text-align: center; }
+        input, select, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; box-sizing: border-box; }
+        input { background: #404040; color: white; }
+        button { background: #ff0000; color: white; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:hover { background: #cc0000; }
+        #status { font-size: 0.9rem; color: #aaa; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Downloader API</h2>
+        <input type="text" id="url" placeholder="Pega el enlace de YouTube">
+        
+        <select id="format">
+            <option value="mp3">Formato: MP3 (Audio)</option>
+            <option value="mp4">Formato: MP4 (Video)</option>
+        </select>
+
+        <select id="quality">
+            <option value="best">Calidad: Máxima</option>
+            <option value="1080">1080p</option>
+            <option value="720">720p</option>
+            <option value="320">320kbps (Solo MP3)</option>
+        </select>
+
+        <button onclick="descargar()">DESCARGAR</button>
+        <div id="status"></div>
+    </div>
+
+    <script>
+        function descargar() {
+            const url = document.getElementById('url').value;
+            const format = document.getElementById('format').value;
+            const quality = document.getElementById('quality').value;
+            const status = document.getElementById('status');
+
+            if (!url) return alert("Ingresa una URL de YouTube");
+            
+            status.innerText = "⏳ Procesando en el servidor... espera un momento.";
+            
+            // CAMBIA ESTA URL por la que te dé Render después:
+            const baseApi = "http://localhost:5000"; 
+            const downloadUrl = `${baseApi}/api/download?url=${encodeURIComponent(url)}&format=${format}&quality=${quality}`;
+            
+            window.location.href = downloadUrl;
+            
+            setTimeout(() => { status.innerText = "✅ Descarga iniciada"; }, 5000);
+        }
+    </script>
+</body>
+</html>
