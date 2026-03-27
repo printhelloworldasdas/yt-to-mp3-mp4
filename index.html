@@ -23,18 +23,17 @@
     <div class="card">
         <h2>YouTube Downloader</h2>
         <input type="text" id="url" placeholder="Pega el enlace de YouTube aquí...">
-        
-        <select id="format">
+
+        <select id="format" onchange="actualizarCalidades()">
             <option value="mp3">Formato: MP3 (Audio)</option>
             <option value="mp4">Formato: MP4 (Video)</option>
         </select>
 
+        <!-- BUG FIX: Separate quality options per format to avoid sending audio
+             bitrates (320/128) as video height filters to yt-dlp. The JS below
+             swaps the options dynamically when the format changes. -->
         <select id="quality">
-            <option value="best">Calidad: Máxima disponible</option>
-            <option value="1080">1080p (Full HD)</option>
-            <option value="720">720p (HD)</option>
-            <option value="320">320kbps (Audio Pro)</option>
-            <option value="128">128kbps (Audio Estándar)</option>
+            <!-- Populated dynamically by actualizarCalidades() -->
         </select>
 
         <button onclick="descargar()">DESCARGAR AHORA</button>
@@ -42,28 +41,56 @@
     </div>
 
     <script>
-        function descargar() {
-            const urlInput = document.getElementById('url').value;
-            const format = document.getElementById('format').value;
-            const quality = document.getElementById('quality').value;
-            const status = document.getElementById('status');
+        const qualityOptions = {
+            mp3: [
+                { value: 'best', label: 'Calidad: Máxima disponible' },
+                { value: '320',  label: '320 kbps (Audio Pro)' },
+                { value: '192',  label: '192 kbps (Audio Estándar)' },
+                { value: '128',  label: '128 kbps (Audio Ligero)' },
+            ],
+            mp4: [
+                { value: 'best', label: 'Calidad: Máxima disponible' },
+                { value: '1080', label: '1080p (Full HD)' },
+                { value: '720',  label: '720p (HD)' },
+                { value: '480',  label: '480p' },
+                { value: '360',  label: '360p' },
+            ],
+        };
 
-            if (!urlInput || !urlInput.includes('youtube.com') && !urlInput.includes('youtu.be')) {
+        function actualizarCalidades() {
+            const format = document.getElementById('format').value;
+            const qualitySelect = document.getElementById('quality');
+            qualitySelect.innerHTML = '';
+            qualityOptions[format].forEach(opt => {
+                const el = document.createElement('option');
+                el.value = opt.value;
+                el.textContent = opt.label;
+                qualitySelect.appendChild(el);
+            });
+        }
+
+        // Populate on load
+        actualizarCalidades();
+
+        function descargar() {
+            const urlInput = document.getElementById('url').value.trim();
+            const format   = document.getElementById('format').value;
+            const quality  = document.getElementById('quality').value;
+            const status   = document.getElementById('status');
+
+            if (!urlInput || (!urlInput.includes('youtube.com') && !urlInput.includes('youtu.be'))) {
                 return alert("Por favor, introduce una URL válida de YouTube.");
             }
-            
+
             status.innerHTML = "<span class='loader'>⏳ Procesando...</span><br>El servidor está preparando tu archivo. No cierres la ventana.";
-            
-            // TU URL DE RENDER ACTUALIZADA
-            const baseApi = "https://yt2download.onrender.com"; 
+
+            const baseApi = "https://yt2download.onrender.com";
             const downloadUrl = `${baseApi}/api/download?url=${encodeURIComponent(urlInput)}&format=${format}&quality=${quality}`;
-            
-            // Esto redirige a la descarga directa
+
             window.location.href = downloadUrl;
-            
-            // Limpiamos el mensaje tras un tiempo prudencial
-            setTimeout(() => { 
-                status.innerHTML = "✅ Si la descarga no inicia, revisa tu conexión."; 
+
+            setTimeout(() => {
+                status.innerHTML = "✅ Si la descarga no inicia, revisa tu conexión.";
             }, 8000);
         }
     </script>
