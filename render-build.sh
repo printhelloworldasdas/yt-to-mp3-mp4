@@ -8,11 +8,15 @@ pip install -r requirements.txt
 mkdir -p ffmpeg
 cd ffmpeg
 
-# 3. Descargar FFmpeg (Usamos -L para seguir redirecciones y -O para guardar el archivo)
+# 3. Descargar FFmpeg (static build para Linux amd64)
+# BUG FIX: La URL anterior apuntaba a la homepage, no al archivo binario.
+# Usamos la URL correcta del release estático más reciente.
 echo "Descargando FFmpeg..."
-curl -L -O https://johnvansickle.com
+curl -L -o ffmpeg-release-amd64-static.tar.xz \
+  "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz"
 
 # 4. Descomprimir con cuidado
+# BUG FIX: El nombre del archivo ahora coincide con el que descargamos arriba.
 echo "Descomprimiendo..."
 tar xf ffmpeg-release-amd64-static.tar.xz --strip-components 1
 
@@ -20,4 +24,4 @@ tar xf ffmpeg-release-amd64-static.tar.xz --strip-components 1
 rm ffmpeg-release-amd64-static.tar.xz
 
 cd ..
-echo "FFmpeg instalado correctamente."
+echo "FFmpeg instalado correctamente en $(pwd)/ffmpeg/ffmpeg"
